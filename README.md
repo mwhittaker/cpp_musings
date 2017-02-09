@@ -87,6 +87,51 @@ int main() {
 }
 ```
 
+# Lambda capture gotcha
+Pop quiz, hotshot. What does [the following
+program](http://coliru.stacked-crooked.com/a/d9d88d4ff22dd0ea) print?
+
+```c++
+#include <iostream>
+
+int main() {
+  auto const_thunk = [](const std::string& x) { return [&x] { return x; }; };
+  auto foo = const_thunk("foo");
+  std::cout << foo() << std::endl;
+}
+```
+
+Surprise, the answer is the program invokes undefined behavior! Here's the
+relevant snippet from
+[cppreference](http://en.cppreference.com/w/cpp/language/lambda):
+
+> If an entity is captured by reference, implicitly or explicitly, and the
+> function call operator of the closure object is invoked after the entity's
+> lifetime has ended, undefined behavior occurs. The C++ closures do not extend
+> the lifetimes of the captured references.
+
+In much the same way you shouldn't write a class like this:
+
+```c++
+class Foo {
+  public:
+    Foo(const std::string& x) : x_(x) {}
+    void Print() { std::cout << x_ << std::endl; }
+  private:
+    const std::string& x_;
+};
+```
+
+because this can happen:
+
+```c++
+Foo foo("foo");
+foo.Print(); // undefined behavior
+```
+
+you should be careful not to capture references in a lambda if the lambda will
+outlive the thing being referenced.
+
 # Metaprogramming
 - http://www.oreilly.com/programming/free/files/practical-c-plus-plus-metaprogramming.pdf
 
