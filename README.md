@@ -132,6 +132,9 @@ foo.Print(); // undefined behavior
 you should be careful not to capture references in a lambda if the lambda will
 outlive the thing being referenced.
 
+# What is the keyword `typename` used for?
+- http://stackoverflow.com/questions/610245/where-and-why-do-i-have-to-put-the-template-and-typename-keywords
+
 # Metaprogramming
 - http://www.oreilly.com/programming/free/files/practical-c-plus-plus-metaprogramming.pdf
 
